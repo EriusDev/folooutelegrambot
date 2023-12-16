@@ -8,7 +8,7 @@ const telegramToken = process.env.TELEGRAM_TOKEN || '6901826067:AAH8LDhATAkzNVzY
 const bot = new TelegramBot(telegramToken, { polling: false });
 
 // Obtén la URL única de Render y configura el Webhook
-const renderAppURL = 'https://foloou-bot-telegram-l092mgghf-eriusdev.render.com'; // Reemplaza con tu URL de Render
+const renderAppURL = 'https://folooutelegrambot.onrender.com'; // Reemplaza con tu URL de Render
 const webhookPath = `/bot${telegramToken}`;
 
 // Configura el Webhook
