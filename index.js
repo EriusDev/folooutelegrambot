@@ -16,25 +16,51 @@ const telegramToken = process.env.TELEGRAM_TOKEN || 'AAH8LDhATAkzNVzYKkqEigS_pKX
 
 const bot = new TelegramBot(telegramToken, { polling: true });
 
+// Manejar el comando /start con un teclado en línea
 bot.onText(/\/start/, (msg) => {
   const chatId = msg.chat.id;
-  bot.sendMessage(chatId, '¡Hola! Bienvenido a tu bot paso a paso. Envia /paso1 para comenzar.');
+  const keyboard = {
+    inline_keyboard: [
+      [{ text: 'Enviar nueva indicación', callback_data: 'new_instruction' }],
+      [{ text: 'Salir', callback_data: 'exit' }]
+    ]
+  };
+
+  bot.sendMessage(chatId, 'Selecciona una opción:', {
+    reply_markup: JSON.stringify(keyboard)
+  });
 });
 
-bot.onText(/\/paso1/, (msg) => {
-  const chatId = msg.chat.id;
-  bot.sendMessage(chatId, 'Paso 1: Por favor, envía tu nombre.');
+// Manejar los botones en línea
+bot.on('callback_query', (callbackQuery) => {
+  const chatId = callbackQuery.message.chat.id;
+  const data = callbackQuery.data;
+
+  switch (data) {
+    case 'new_instruction':
+      bot.sendMessage(chatId, 'Por favor, envía tu nombre:');
+      // Puedes seguir con más preguntas...
+      break;
+    case 'exit':
+      bot.sendMessage(chatId, 'Has seleccionado salir. ¡Hasta luego!');
+      break;
+    default:
+      // Lógica para manejar otros botones si es necesario
+  }
 });
 
+// Manejar las respuestas a las preguntas
 bot.on('message', (msg) => {
   const chatId = msg.chat.id;
-  switch (msg.text) {
-    case 'Paso 1: Tu Nombre':
-      // Puedes almacenar la información en una base de datos o en memoria.
-      // En este ejemplo, simplemente lo mostraremos.
-      bot.sendMessage(chatId, `Tu nombre es: ${msg.text}`);
-      // Puedes agregar más pasos y lógica según tus necesidades.
+  const text = msg.text;
+
+  // Puedes agregar lógica aquí para manejar las respuestas a tus preguntas
+  switch (text) {
+    case 'Tu nombre es:':
+      // Lógica para manejar el nombre
+      bot.sendMessage(chatId, `¡Hola, ${text}! Ahora, por favor, envía tu correo electrónico.`);
       break;
+    // Agrega más casos según sea necesario...
     default:
       bot.sendMessage(chatId, 'Por favor, sigue las instrucciones.');
   }
