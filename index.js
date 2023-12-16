@@ -1,6 +1,16 @@
-const functions = require('firebase-functions');
+const express = require('express');
 const TelegramBot = require('node-telegram-bot-api');
+const port = process.env.PORT || 3000;
 
+const app = express();
+
+app.get('/', (req, res) => {
+  res.send('Tu bot de Telegram está en funcionamiento en Heroku.');
+});
+
+app.listen(port, () => {
+  console.log(`El servidor está escuchando en el puerto ${port}`);
+});
 
 const telegramToken = process.env.TELEGRAM_TOKEN || 'AAH8LDhATAkzNVzYKkqEigS_pKXMpX6u2LE';
 
@@ -28,8 +38,4 @@ bot.on('message', (msg) => {
     default:
       bot.sendMessage(chatId, 'Por favor, sigue las instrucciones.');
   }
-});
-
-exports.telegramBot = functions.https.onRequest((request, response) => {
-  response.send('Tu bot de Telegram está en funcionamiento en Firebase.');
 });
