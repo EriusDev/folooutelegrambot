@@ -4,17 +4,14 @@ const port = process.env.PORT || 3000;
 
 const app = express();
 
-app.get('/', (req, res) => {
-  res.send('Tu bot de Telegram está en funcionamiento en Heroku.');
-});
-
-app.listen(port, () => {
-  console.log(`El servidor está escuchando en el puerto ${port}`);
-});
-
 const telegramToken = process.env.TELEGRAM_TOKEN || 'AAH8LDhATAkzNVzYKkqEigS_pKXMpX6u2LE';
+const bot = new TelegramBot(telegramToken, { polling: false });
 
-const bot = new TelegramBot(telegramToken, { polling: true });
+// Obtén la URL única de Render y configura el Webhook
+const renderAppURL = 'https://foloou-bot-telegram-l092mgghf-eriusdev.render.com'; // Reemplaza con tu URL de Render
+const webhookPath = `/bot${telegramToken}`;
+bot.setWebHook(`${renderAppURL}${webhookPath}`);
+app.use(bot.webhookCallback(webhookPath));
 
 // Manejar el comando /start con un teclado en línea
 bot.onText(/\/start/, (msg) => {
@@ -64,4 +61,12 @@ bot.on('message', (msg) => {
     default:
       bot.sendMessage(chatId, 'Por favor, sigue las instrucciones.');
   }
+});
+
+app.get('/', (req, res) => {
+  res.send('Tu bot de Telegram está en funcionamiento en Render.');
+});
+
+app.listen(port, () => {
+  console.log(`El servidor está escuchando en el puerto ${port}`);
 });
