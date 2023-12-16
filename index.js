@@ -10,8 +10,9 @@ const bot = new TelegramBot(telegramToken, { polling: false });
 // Obtén la URL única de Render y configura el Webhook
 const renderAppURL = 'https://foloou-bot-telegram-l092mgghf-eriusdev.render.com'; // Reemplaza con tu URL de Render
 const webhookPath = `/bot${telegramToken}`;
+
+// Configura el Webhook
 bot.setWebHook(`${renderAppURL}${webhookPath}`);
-app.use(bot.webhookCallback(webhookPath));
 
 // Manejar el comando /start con un teclado en línea
 bot.onText(/\/start/, (msg) => {
@@ -65,6 +66,11 @@ bot.on('message', (msg) => {
 
 app.get('/', (req, res) => {
   res.send('Tu bot de Telegram está en funcionamiento en Render.');
+});
+
+app.post(webhookPath, express.json(), (req, res) => {
+  bot.processUpdate(req.body);
+  res.sendStatus(200);
 });
 
 app.listen(port, () => {
