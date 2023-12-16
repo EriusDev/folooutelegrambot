@@ -4,7 +4,7 @@ const port = process.env.PORT || 3000;
 
 const app = express();
 
-const telegramToken = process.env.TELEGRAM_TOKEN || 'AAH8LDhATAkzNVzYKkqEigS_pKXMpX6u2LE';
+const telegramToken = process.env.TELEGRAM_TOKEN || '6901826067:AAH8LDhATAkzNVzYKkqEigS_pKXMpX6u2LE';
 const bot = new TelegramBot(telegramToken, { polling: false });
 
 // Obtén la URL única de Render y configura el Webhook
