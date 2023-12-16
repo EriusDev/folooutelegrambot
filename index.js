@@ -1,8 +1,10 @@
 const functions = require('firebase-functions');
 const TelegramBot = require('node-telegram-bot-api');
 
-const botToken = process.env.BOT_TOKEN || '6901826067:AAH8LDhATAkzNVzYKkqEigS_pKXMpX6u2LE';
-const bot = new TelegramBot(botToken, { polling: true });
+
+const telegramToken = process.env.TELEGRAM_TOKEN || 'AAH8LDhATAkzNVzYKkqEigS_pKXMpX6u2LE';
+
+const bot = new TelegramBot(telegramToken, { polling: true });
 
 bot.onText(/\/start/, (msg) => {
   const chatId = msg.chat.id;
