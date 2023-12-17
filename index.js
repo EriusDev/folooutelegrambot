@@ -36,6 +36,7 @@ bot.on('callback_query', (callbackQuery) => {
 
   switch (data) {
     case 'send_instructions':
+      // Comenzar el proceso de envío de indicaciones
       bot.sendMessage(chatId, 'Por favor, indica el nombre de la indicación:');
       break;
     case 'exit':
@@ -47,6 +48,10 @@ bot.on('callback_query', (callbackQuery) => {
 });
 
 // Manejar las respuestas a las preguntas
+let nombreGuardado = '';
+let localizacionGuardada = '';
+let descripcionGuardada = '';
+
 bot.on('message', (msg) => {
   const chatId = msg.chat.id;
   const text = msg.text;
@@ -54,19 +59,15 @@ bot.on('message', (msg) => {
   // Lógica para manejar las respuestas a las preguntas
   // Puedes agregar más casos según sea necesario
 
-  // Ejemplo para la primera pregunta
-  if (text === 'Por favor, indica el nombre de la indicación:') {
-    // Almacena la respuesta en algún lugar (base de datos, memoria, etc.)
-    // y sigue con la siguiente pregunta
-    // Puedes modificar esta lógica según tus necesidades
+  if (text.startsWith('Por favor, indica el nombre de la indicación:')) {
+    nombreGuardado = text.replace('Por favor, indica el nombre de la indicación:', '').trim();
     bot.sendMessage(chatId, 'Por favor, indica la localización:');
-  }
-
-  // Puedes continuar con más lógica para las demás preguntas...
-
-  // Ejemplo: Cuando se recopilan todos los datos
-  if (text === 'Por favor, indica la localización:') {
-    // Guarda la localización y muestra un resumen
+  } else if (text.startsWith('Por favor, indica la localización:')) {
+    localizacionGuardada = text.replace('Por favor, indica la localización:', '').trim();
+    bot.sendMessage(chatId, 'Por favor, indica la descripción (opcional):');
+  } else if (text.startsWith('Por favor, indica la descripción (opcional):')) {
+    descripcionGuardada = text.replace('Por favor, indica la descripción (opcional):', '').trim();
+    // Muestra un resumen
     const summary = `Resumen de la indicación:
 Nombre: ${nombreGuardado}
 Localización: ${localizacionGuardada}
@@ -93,6 +94,10 @@ bot.on('callback_query', (callbackQuery) => {
       bot.sendMessage(chatId, '¡Gracias por enviar las indicaciones!');
       break;
     case 'start_over':
+      // Reiniciar el proceso
+      nombreGuardado = '';
+      localizacionGuardada = '';
+      descripcionGuardada = '';
       bot.sendMessage(chatId, 'Volvamos a empezar. Selecciona una opción:', {
         reply_markup: {
           inline_keyboard: [
