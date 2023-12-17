@@ -48,6 +48,7 @@ bot.on('callback_query', (callbackQuery) => {
 });
 
 // Manejar las respuestas a las preguntas
+let paso = 1;
 let nombreGuardado = '';
 let localizacionGuardada = '';
 let descripcionGuardada = '';
@@ -59,28 +60,35 @@ bot.on('message', (msg) => {
   // Lógica para manejar las respuestas a las preguntas
   // Puedes agregar más casos según sea necesario
 
-  if (text.startsWith('Por favor, indica el nombre de la indicación:')) {
-    nombreGuardado = text.replace('Por favor, indica el nombre de la indicación:', '').trim();
-    bot.sendMessage(chatId, 'Por favor, indica la localización:');
-  } else if (text.startsWith('Por favor, indica la localización:')) {
-    localizacionGuardada = text.replace('Por favor, indica la localización:', '').trim();
-    bot.sendMessage(chatId, 'Por favor, indica la descripción (opcional):');
-  } else if (text.startsWith('Por favor, indica la descripción (opcional):')) {
-    descripcionGuardada = text.replace('Por favor, indica la descripción (opcional):', '').trim();
-    // Muestra un resumen
-    const summary = `Resumen de la indicación:
+  switch (paso) {
+    case 1:
+      nombreGuardado = text.trim();
+      bot.sendMessage(chatId, 'Por favor, indica la localización:');
+      paso++;
+      break;
+    case 2:
+      localizacionGuardada = text.trim();
+      bot.sendMessage(chatId, 'Por favor, indica la descripción (opcional):');
+      paso++;
+      break;
+    case 3:
+      descripcionGuardada = text.trim();
+      // Muestra un resumen
+      const summary = `Resumen de la indicación:
 Nombre: ${nombreGuardado}
 Localización: ${localizacionGuardada}
 Descripción: ${descripcionGuardada || 'No proporcionada'}`;
 
-    bot.sendMessage(chatId, summary, {
-      reply_markup: {
-        inline_keyboard: [
-          [{ text: 'Todo OK', callback_data: 'ok' }],
-          [{ text: 'Volver a empezar', callback_data: 'start_over' }]
-        ]
-      }
-    });
+      bot.sendMessage(chatId, summary, {
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: 'Todo OK', callback_data: 'ok' }],
+            [{ text: 'Volver a empezar', callback_data: 'start_over' }]
+          ]
+        }
+      });
+      paso = 1; // Reiniciar el paso después de mostrar el resumen
+      break;
   }
 });
 
