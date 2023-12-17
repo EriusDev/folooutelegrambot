@@ -19,7 +19,7 @@ bot.onText(/\/start/, (msg) => {
   const chatId = msg.chat.id;
   const keyboard = {
     inline_keyboard: [
-      [{ text: 'Enviar nueva indicación', callback_data: 'new_instruction' }],
+      [{ text: 'Enviar indicaciones', callback_data: 'send_instructions' }],
       [{ text: 'Salir', callback_data: 'exit' }]
     ]
   };
@@ -35,9 +35,8 @@ bot.on('callback_query', (callbackQuery) => {
   const data = callbackQuery.data;
 
   switch (data) {
-    case 'new_instruction':
-      bot.sendMessage(chatId, 'Por favor, envía tu nombre:');
-      // Puedes seguir con más preguntas...
+    case 'send_instructions':
+      bot.sendMessage(chatId, 'Por favor, indica el nombre de la indicación:');
       break;
     case 'exit':
       bot.sendMessage(chatId, 'Has seleccionado salir. ¡Hasta luego!');
@@ -52,20 +51,60 @@ bot.on('message', (msg) => {
   const chatId = msg.chat.id;
   const text = msg.text;
 
-  // Puedes agregar lógica aquí para manejar las respuestas a tus preguntas
-  switch (text) {
-    case 'Tu nombre es:':
-      // Lógica para manejar el nombre
-      bot.sendMessage(chatId, `¡Hola, ${text}! Ahora, por favor, envía tu correo electrónico.`);
-      break;
-    // Agrega más casos según sea necesario...
-    default:
-      bot.sendMessage(chatId, 'Por favor, sigue las instrucciones.');
+  // Lógica para manejar las respuestas a las preguntas
+  // Puedes agregar más casos según sea necesario
+
+  // Ejemplo para la primera pregunta
+  if (text === 'Por favor, indica el nombre de la indicación:') {
+    // Almacena la respuesta en algún lugar (base de datos, memoria, etc.)
+    // y sigue con la siguiente pregunta
+    // Puedes modificar esta lógica según tus necesidades
+    bot.sendMessage(chatId, 'Por favor, indica la localización:');
+  }
+
+  // Puedes continuar con más lógica para las demás preguntas...
+
+  // Ejemplo: Cuando se recopilan todos los datos
+  if (text === 'Por favor, indica la localización:') {
+    // Guarda la localización y muestra un resumen
+    const summary = `Resumen de la indicación:
+Nombre: ${nombreGuardado}
+Localización: ${localizacionGuardada}
+Descripción: ${descripcionGuardada || 'No proporcionada'}`;
+
+    bot.sendMessage(chatId, summary, {
+      reply_markup: {
+        inline_keyboard: [
+          [{ text: 'Todo OK', callback_data: 'ok' }],
+          [{ text: 'Volver a empezar', callback_data: 'start_over' }]
+        ]
+      }
+    });
   }
 });
 
-app.get('/', (req, res) => {
-  res.send('Tu bot de Telegram está en funcionamiento en Render.');
+// Manejar la respuesta al resumen
+bot.on('callback_query', (callbackQuery) => {
+  const chatId = callbackQuery.message.chat.id;
+  const data = callbackQuery.data;
+
+  switch (data) {
+    case 'ok':
+      bot.sendMessage(chatId, '¡Gracias por enviar las indicaciones!');
+      break;
+    case 'start_over':
+      bot.sendMessage(chatId, 'Volvamos a empezar. Selecciona una opción:', {
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: 'Enviar indicaciones', callback_data: 'send_instructions' }],
+            [{ text: 'Salir', callback_data: 'exit' }]
+          ]
+        }
+      });
+      break;
+    default:
+      // Lógica para manejar otros botones si es necesario
+  }
 });
 
 app.post(webhookPath, express.json(), (req, res) => {
